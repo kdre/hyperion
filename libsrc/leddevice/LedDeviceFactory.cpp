@@ -18,6 +18,10 @@
 	#include "LedDeviceAPA102.h"
 #endif
 
+#ifdef ENABLE_FT232H
+	#include "LedDeviceAPA102ViaFT232H.h"
+#endif
+
 #ifdef ENABLE_TINKERFORGE
 	#include "LedDeviceTinkerforge.h"
 #endif
@@ -155,6 +159,21 @@ LedDevice * LedDeviceFactory::construct(const Json::Value & deviceConfig)
 		device = deviceWs2812SPI;
 	}
 #endif
+#ifdef ENABLE_FT232H
+	else if (type == "apa102viaft232h")
+	{
+		// TODO
+		const std::string output = deviceConfig["output"].asString();
+		const unsigned rate      = deviceConfig["rate"].asInt();
+		const unsigned ledcount  = deviceConfig.get("leds",0).asInt();
+
+		LedDeviceAPA102ViaFT232H* deviceAPA102ViaFT232H = new LedDeviceAPA102ViaFT232H(SPI3, rate, MSB, ledcount); //4 = spi3, 0x00=MSB
+		deviceAPA102ViaFT232H->open();
+
+		device = deviceAPA102ViaFT232H;
+	}
+#endif
+
 #ifdef ENABLE_TINKERFORGE
 	else if (type=="tinkerforge")
 	{

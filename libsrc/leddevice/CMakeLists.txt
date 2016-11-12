@@ -95,6 +95,19 @@ if(ENABLE_SPIDEV)
 	)
 endif()
 
+if(ENABLE_FT232H)
+	SET(Leddevice_HEADERS
+		${Leddevice_HEADERS}
+		${CURRENT_SOURCE_DIR}/LedFT232HDevice.h
+		${CURRENT_SOURCE_DIR}/LedDeviceAPA102ViaFT232H.h
+	)
+	SET(Leddevice_SOURCES
+		${Leddevice_SOURCES}
+		${CURRENT_SOURCE_DIR}/LedFT232HDevice.cpp
+		${CURRENT_SOURCE_DIR}/LedDeviceAPA102ViaFT232H.cpp
+	)
+endif()
+
 if(ENABLE_WS2812BPWM)
 	SET(Leddevice_HEADERS
 		${Leddevice_HEADERS}
@@ -142,6 +155,10 @@ add_library(leddevice
 	${Leddevice_HEADERS_MOC}
 	${Leddevice_SOURCES}
 )
+
+if(ENABLE_FT232H)
+	target_link_libraries(leddevice mpsse)
+endif()
 
 if(ENABLE_QT5)
 	qt5_use_modules(leddevice Widgets Network)
